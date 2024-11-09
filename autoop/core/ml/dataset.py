@@ -7,15 +7,18 @@ class Dataset(Artifact):
 
     def __init__(self, *args, **kwargs):
         super().__init__(type="dataset", *args, **kwargs)
+        self._data = b""
 
     @staticmethod
     def from_dataframe(data: pd.DataFrame, name: str, asset_path: str, version: str="1.0.0"):
-        return Dataset(
+        instance = Dataset(
             name=name,
             asset_path=asset_path,
             data=data.to_csv(index=False).encode(),
             version=version,
         )
+        instance._data = data.to_csv(index=False).encode()
+        return instance
         
     def read(self) -> pd.DataFrame:
         bytes = super().read()
