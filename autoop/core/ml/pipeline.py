@@ -31,18 +31,25 @@ class Pipeline():
         self._artifacts = {}
         self._split = split
         if (
-            target_feature.type == "categorical" and
-            model.type != "classification"
+            target_feature.type == "categorical"
+            and model.type != "classification"
         ):
             raise ValueError(
-            "Model type must be classification for categorical target feature"
-                )
+                "Model type must be classification for "
+                "categorical target feature"
+            )
         if target_feature.type == "continuous" and model.type != "regression":
             raise ValueError(
                 "Model type must be regression for continuous target feature"
-                )
+            )
 
     def __str__(self) -> str:
+        """
+        Method to return the pipeline into a string representation.
+
+        Returns:
+            str: string representation of the pipeline.
+        """
         return f"""
 Pipeline(
     model={self._model.type},

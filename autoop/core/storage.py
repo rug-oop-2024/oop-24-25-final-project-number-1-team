@@ -16,7 +16,7 @@ class NotFoundError(Exception):
 
 
 class Storage(ABC):
-
+    """Abstract class for storage operations."""
     @abstractmethod
     def save(self, data: bytes, path: str) -> None:
         """
@@ -60,6 +60,7 @@ class Storage(ABC):
 
 
 class LocalStorage(Storage):
+    """Local storage class for file operations."""
 
     def __init__(self, base_path: str = "./assets") -> None:
         """
