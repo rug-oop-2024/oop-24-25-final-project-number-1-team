@@ -77,7 +77,7 @@ def filter_dataset(dataset: Dataset) -> tuple:
         filtered_col = st.selectbox(f"Select column for filter {i + 1}",
                                     columns,
                                     key=f"filter_{i}")
-        
+
         if data[filtered_col].dtype == 'object':
             # in this case it is a categorical column
             unique_vals = data[filtered_col].unique()
@@ -92,20 +92,22 @@ def filter_dataset(dataset: Dataset) -> tuple:
             # in this case it is a numerical column
             min_val = float(data[filtered_col].min())
             max_val = float(data[filtered_col].max())
-            select_range = st.slider(f"Select range for '{filtered_col}'",
-                              min_val,
-                              max_val,
-                              (min_val, max_val),
-                              key=f"filter_val_{i}")
-            filters.append((data[filtered_col] >= select_range[0]) &
-                            (data[filtered_col] <= select_range[1]))
-    
+            select_range = st.slider(
+                f"Select range for '{filtered_col}'",
+                min_val,
+                max_val,
+                (min_val, max_val),
+                key=f"filter_val_{i}")
+            cond1 = data[filtered_col] >= select_range[0]
+            cond2 = data[filtered_col] <= select_range[1]
+            filters.append(cond1 & cond2)
+
     if filters:
         combined = filters[0]
         for f in filters[1:]:
             combined = combined & f
         data = data[combined]
-        
+
     st.write("Filtered preview:")
     st.write(data.head())
 
@@ -323,7 +325,8 @@ filtered_dataset = Dataset.from_dataframe(
     data=filtered_data,
 )
 
-features, target_feature, task_type, map_features = select_features(filtered_dataset)
+(features, target_feature,
+ task_type, map_features) = select_features(filtered_dataset)
 if not (features and target_feature):
     st.stop()
 
