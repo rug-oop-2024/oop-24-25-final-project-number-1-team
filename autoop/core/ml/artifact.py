@@ -10,13 +10,13 @@ class Artifact(BaseModel):
     per requirement.
     """
     name: str = Field(title="Artifact name")
-    version: str = Field(title="Artifact version")
-    asset_path: str = Field(title="Artifact asset path")
+    version: str = Field(default="1.0.0.", title="Artifact version")
+    asset_path: str = Field(default="", title="Artifact asset path")
     data: bytes = Field(title="Data of artifact5 in binary format")
     metadata: Dict[str, str] = Field(default_factory=dict,
                                      title="Artifact metadata")
     tags: List[str] = Field(default_factory=list, title="Artifact tags")
-    type: str = Field(title="Artifact type")
+    type: str = Field(default="", title="Artifact type")
 
     @property
     def id(self) -> str:

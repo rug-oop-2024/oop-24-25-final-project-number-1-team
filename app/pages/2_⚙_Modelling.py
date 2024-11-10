@@ -11,6 +11,7 @@ from autoop.core.ml.metric import (
     get_metric, REGRESSION_METRICS, CLASSIFICATION_METRICS
 )
 from autoop.core.ml.pipeline import Pipeline
+from typing import Tuple
 
 st.set_page_config(page_title="Modelling", page_icon="📈")
 
@@ -233,7 +234,7 @@ def train_pipeline(dataset: Dataset,
                    model_name: str,
                    split: float,
                    metrics: list,
-                   map_features: dict) -> dict:
+                   map_features: dict) -> Tuple[dict, Pipeline]:
     """
     Function used to train the pipeline given all its info selected by user.
 
@@ -247,7 +248,8 @@ def train_pipeline(dataset: Dataset,
         map_features (dict): A mapping of feature names to their objects.
 
     Returns:
-        dict: The results of the pipeline execution.
+        Tuple[dict, Pipeline]: The results of the pipeline execution
+                                and the pipeline object itself.
     """
     try:
         model_features = [map_features[feature] for feature in features]
@@ -270,10 +272,10 @@ def train_pipeline(dataset: Dataset,
             results = pipeline.execute()
         st.success("Training completed!")
 
-        return results
+        return results, pipeline
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
-        return None
+        return None, None
 
 
 def write_results(results: dict) -> None:
@@ -362,7 +364,7 @@ if st.session_state['last_inputs'] != inputs:
 st.session_state['last_inputs'] = inputs
 
 if st.button("Train Pipeline"):
-    results = train_pipeline(dataset,
+    results, pipeline = train_pipeline(dataset,
                              features,
                              target_feature,
                              model_name,
@@ -371,7 +373,26 @@ if st.button("Train Pipeline"):
                              map_features)
     if results:
         st.session_state['results'] = results
+        st.session_state['pipeline'] = pipeline
         write_results(results)
 else:
     if st.session_state['results']:
         write_results(st.session_state['results'])
+
+if 'pipeline' in st.session_state and st.session_state['pipeline']:
+    st.subheader('Save Pipeline')
+    pipeline_name = st.text_input("Pipeline Name")
+    pipeline_version = st.text_input("Pipeline Version")
+    if st.button("Save Pipeline"):
+        pipeline = st.session_state['pipeline']
+        automl = AutoMLSystem.get_instance()
+        artifacts = pipeline.artifacts
+
+        for artifact in artifacts:
+            artifact.name = f"{pipeline_name}_{artifact.name}"
+            artifact.version = pipeline_version
+            artifact.asset_path = f"pipelines/{pipeline_name}/{artifact.name}_{artifact.version}.pkl"
+            artifact.type = "pipeline"
+            automl.registry.register(artifact)
+        
+        st.success("Pipeline saved successfully!")
