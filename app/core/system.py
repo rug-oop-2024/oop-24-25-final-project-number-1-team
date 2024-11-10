@@ -14,7 +14,8 @@ class ArtifactRegistry():
         Initializes the class with a storage and a database.
 
         Args:
-            database (Database): The database instance that is used for entries.
+            database (Database): The database instance that is used 
+                                for entries.
             storage (Storage): The storage to use for saving
                                 and loading artifacts.
         """
@@ -40,9 +41,9 @@ class ArtifactRegistry():
             "metadata": artifact.metadata,
             "type": artifact.type,
         }
-        self._database.set(f"artifacts", artifact.id, entry)
-    
-    def list(self, type: str=None) -> List[Artifact]:
+        self._database.set("artifacts", artifact.id, entry)
+
+    def list(self, type: str = None) -> List[Artifact]:
         """
         Lists all artifacts with filters possiblity by type.
 
@@ -67,7 +68,7 @@ class ArtifactRegistry():
             )
             artifacts.append(artifact)
         return artifacts
-    
+
     def get(self, artifact_id: str) -> Artifact:
         """
         Retrieves an artifact object by its id.
@@ -87,7 +88,7 @@ class ArtifactRegistry():
             data=self._storage.load(data["asset_path"]),
             type=data["type"],
         )
-    
+
     def delete(self, artifact_id: str) -> None:
         """
         Deletes one artiiifact from storage and db, by its id.
@@ -98,7 +99,7 @@ class ArtifactRegistry():
         data = self._database.get("artifacts", artifact_id)
         self._storage.delete(data["asset_path"])
         self._database.delete("artifacts", artifact_id)
-    
+
 
 class AutoMLSystem:
     """

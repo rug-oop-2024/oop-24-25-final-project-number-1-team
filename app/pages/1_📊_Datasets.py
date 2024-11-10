@@ -11,8 +11,9 @@ st.set_page_config(
     page_icon="📊",
 )
 
+
 def write_helper_text(text: str) -> None:
-    # for rendering the subtitle
+    """Method used for rendering the subtitle"""
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
 

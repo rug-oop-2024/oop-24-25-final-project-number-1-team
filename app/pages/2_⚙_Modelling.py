@@ -16,7 +16,7 @@ st.set_page_config(page_title="Modelling", page_icon="📈")
 
 
 def write_helper_text(text: str) -> None:
-    # for rendering the subtitle
+    """Method used for rendering the subtitle"""
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
 
@@ -63,7 +63,7 @@ def select_features(dataset: Dataset) -> tuple:
 
     Returns:
         tuple: The selected input features, target feature, task type and
-        a mapping of feature names to their objects.    
+        a mapping of feature names to their objects.
     """
     features = detect_feature_types(dataset)
     map_features = {feature.name: feature for feature in features}
