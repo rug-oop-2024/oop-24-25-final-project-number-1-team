@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, PrivateAttr
+from pydantic import BaseModel, Field
 from typing import List, Dict
 import base64
 
@@ -7,12 +7,12 @@ class Artifact(BaseModel):
     """A class used to store info about an artifact, for example its name,
     version, asset path, metadata, tags, type. It also stores the binary data
     of the artifact. It also has a property for generating an uniquee id, as
-    per requirements.
+    per requirement.
     """
     name: str = Field(title="Artifact name")
     version: str = Field(title="Artifact version")
     asset_path: str = Field(title="Artifact asset path")
-    _data: bytes = PrivateAttr()
+    data: bytes = Field(title="Data of artifact5 in binary format")
     metadata: Dict[str, str] = Field(default_factory=dict,
                                      title="Artifact metadata")
     tags: List[str] = Field(default_factory=list, title="Artifact tags")
@@ -27,14 +27,21 @@ class Artifact(BaseModel):
         Returns:
             str: Unique ID of the artifact.
         """
-        encoded_path = base64.b64encode(self.asset_path.encode()).decode()
-        return f"{encoded_path}:{self.version}"
+        base_path = base64.b64encode(self.asset_path.encode()).decode()
+        encoded_path = base_path.rstrip("=").replace('+', '-').replace('/', '_')
+        encoded_version = self.version.replace('.', '_').replace(":", "_").replace(',', '_').replace('=', '_')
+        return f"{encoded_path}_{encoded_version}"
 
     def read(self) -> bytes:
         """
-        Returns the binary data of the artifact.
+        Returns the binary data of the artifact. As bytes data type
+        is immutable, we can directly return it without risk of
+        data leakage.
+
+        Returns:
+            bytes: Binary data of the artifact.
         """
-        return self._data
+        return self.data
 
     def save(self, data: bytes) -> bytes:
         """
@@ -45,5 +52,5 @@ class Artifact(BaseModel):
         Returns:
             bytes: Saved binary data.
         """
-        self._data = data
-        return self._data
+        self.data = data
+        return self.data

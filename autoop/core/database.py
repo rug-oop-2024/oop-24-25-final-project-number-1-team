@@ -88,22 +88,30 @@ class Database():
                 continue
             for id, item in data.items():
                 self._storage.save(json.dumps(item).encode(),
-                                   f"{collection}{os.sep}{id}")
+                                   os.path.join(collection, id))
 
         # for things that were deleted, we need to remove them from the storage
         keys = self._storage.list("")
         for key in keys:
-            collection, id = key.split(os.sep)[-2:]
-            if not self._data.get(collection, id):
-                self._storage.delete(f"{collection}{os.sep}{id}")
+            norm_key = os.path.normpath(key)  # for os compatibility
+            parts = norm_key.split(os.sep)
+            if len(parts) < 2:
+                continue
+            collection, id = parts[-2:]
+            if not self._data.get(collection, {}).get(id):
+                self._storage.delete(os.path.join(collection, id))
 
     def _load(self) -> None:
         """Load the data from storage"""
         self._data = {}
         for key in self._storage.list(""):
-            collection, id = key.split(os.sep)[-2:]
-            data = self._storage.load(f"{collection}{os.sep}{id}")
+            norm_key = os.path.normpath(key)  # for os compatibility
+            parts = norm_key.split(os.sep)
+            if len(parts) < 2:
+                continue
+            collection, id = parts[-2:]
+            data = self._storage.load(os.path.join(collection,id))
             # Ensure the collection exists in the dictionary
             if collection not in self._data:
-                self._data[collection] = {}
+                self._data[collection] = {} 
             self._data[collection][id] = json.loads(data.decode())
