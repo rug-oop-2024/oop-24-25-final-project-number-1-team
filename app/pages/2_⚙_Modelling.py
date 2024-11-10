@@ -53,6 +53,47 @@ def select_dataset() -> Dataset:
     return selected_dataset
 
 
+def filter_dataset(dataset: Dataset) -> pd.DataFrame:
+    """
+    OOP-003: Filter dataset based on user input.
+    This function allows user to filter based on criteria.
+
+    Args:
+        dataset (Dataset): The dataset object used for training.
+
+    Returns:
+        pd.DataFrame: The filtered dataset.
+    """
+    st.subheader("Filter Dataset")
+
+    data = dataset.read()
+    columns = data.columns.tolist()
+
+    filtered_column = st.selectbox("Select a column to filter", columns)
+
+    if data[filtered_column].dtype == 'object':
+        unique_vals = data[filtered_column].unique()
+        selected_vals = st.multiselect(
+            f"Select values for '{filtered_column}", unique_vals)
+        if selected_vals:
+            data = data[data[filtered_column].isin(selected_vals)]
+
+    else:
+        min_val = float(data[filtered_column].min())
+        max_val = float(data[filtered_column].max())
+        range = st.slider(f"Select range for '{filtered_column}'",
+                          min_val,
+                          max_val,
+                          (min_val, max_val))
+        data = data[((data[filtered_column] >= range[0]) &
+                     (data[filtered_column] <= range[1]))]
+        
+    st.write("Filtered preview:")
+    st.write(data.head())
+
+    return data
+
+
 def select_features(dataset: Dataset) -> tuple:
     """
     A function used to render the feature selection section of the page
@@ -79,6 +120,12 @@ def select_features(dataset: Dataset) -> tuple:
         st.stop()
     if not target_feature:
         st.error("Please select a target feature.")
+        st.stop()
+
+    if target_feature in input_features:
+        st.error("Target feature cannot be an input feature. Please select a "
+                 "different target feature or remove it from the list"
+                 " of input features.")
         st.stop()
 
     target_feature_selected = map_features[target_feature]
@@ -245,7 +292,20 @@ dataset = select_dataset()
 if not dataset:
     st.stop()
 
-features, target_feature, task_type, map_features = select_features(dataset)
+filtered_data = filter_dataset(dataset)
+if filtered_data.empty:
+    st.error("No data found after filtering. Please select"
+             " different criteria.")
+    st.stop()
+
+filtered_dataset = Dataset.from_dataframe(
+    name=dataset.name,
+    version=dataset.version,
+    asset_path=dataset.asset_path,
+    data=filtered_data,
+)
+
+features, target_feature, task_type, map_features = select_features(filtered_dataset)
 if not (features and target_feature):
     st.stop()
 
