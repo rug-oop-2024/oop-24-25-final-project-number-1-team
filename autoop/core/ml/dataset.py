@@ -1,5 +1,5 @@
 from autoop.core.ml.artifact import Artifact
-#from abc import ABC, abstractmethod
+# from abc import ABC, abstractmethod
 import pandas as pd
 import io
 
@@ -9,7 +9,7 @@ class Dataset(Artifact):
     from a pandas df. It has dataset specific methods, such as read and save.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """
         Initializes the artifact, with type set to database, passing all args
         and sets data to an empty byte string.
@@ -21,7 +21,7 @@ class Dataset(Artifact):
     def from_dataframe(data: pd.DataFrame,
                        name: str,
                        asset_path: str,
-                       version: str="1.0.0"):
+                       version: str = "1.0.0") -> 'Dataset':
         """
         Initializes a dataset artifact from a pandas dataframe.
 
@@ -31,7 +31,7 @@ class Dataset(Artifact):
             asset_path (str): Asset path of the artifact.
             version (str, optional): Version of the artifact,
                                     defaulted to "1.0.0".
-        
+
         Returns:
             Dataset: Initialized dataset artifact.
         """

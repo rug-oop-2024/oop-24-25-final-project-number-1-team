@@ -5,9 +5,12 @@ from glob import glob
 
 
 class NotFoundError(Exception):
+    """
+        Raised when a path is not found on storage operations.
+    """
     def __init__(self, path: str) -> None:
         """
-        Raised when a path is not found on storage operations.
+        Initializing NotFoundError with a message.
         """
         super().__init__(f"Path not found: {path}")
 

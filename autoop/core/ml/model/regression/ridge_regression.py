@@ -13,7 +13,7 @@ class RidgeRegression(Model):
         super().__init__(model_type="regression",
                          hyperparameters=hyperparameters)
         self.model = Ridge(**hyperparameters)
-    
+
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
         Trains model on input data and target values.

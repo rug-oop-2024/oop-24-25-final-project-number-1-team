@@ -6,7 +6,7 @@ import numpy as np
 class LogisticRegressionModel(Model):
     """Logistic Regression model"""
 
-    def __init__(self, **hyperparameters):
+    def __init__(self, **hyperparameters) -> None:
         """
         Initializes the classification model and passes hyperparameters
         """

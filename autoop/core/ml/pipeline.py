@@ -11,15 +11,18 @@ import numpy as np
 
 
 class Pipeline():
-    
-    def __init__(self, 
+    """Pipeline class for training, evaluating and predicting with models."""
+    def __init__(self,
                  metrics: List[Metric],
-                 dataset: Dataset, 
+                 dataset: Dataset,
                  model: Model,
                  input_features: List[Feature],
                  target_feature: Feature,
-                 split: float=0.8,
+                 split: float = 0.8,
                  ) -> None:
+        """
+        Initializes the pipeline with all necessary components.
+        """
         self._dataset = dataset
         self._model = model
         self._input_features = input_features
@@ -27,15 +30,19 @@ class Pipeline():
         self._metrics = metrics
         self._artifacts = {}
         self._split = split
-        if (target_feature.type == "categorical" and
-            model.type != "classification"):
-            raise ValueError("Model type must be classification for " +
-                             "categorical target feature")
+        if (
+            target_feature.type == "categorical" and
+            model.type != "classification"
+        ):
+            raise ValueError(
+            "Model type must be classification for categorical target feature"
+                )
         if target_feature.type == "continuous" and model.type != "regression":
-            raise ValueError("Model type must be regression for continuous " +
-                             "target feature")
+            raise ValueError(
+                "Model type must be regression for continuous target feature"
+                )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"""
 Pipeline(
     model={self._model.type},
@@ -81,7 +88,7 @@ Pipeline(
             name=f"pipeline_model_{self._model.type}"))
         return artifacts
 
-    def _register_artifact(self, name: str, artifact) -> None:
+    def _register_artifact(self, name: str, artifact: Artifact) -> None:
         self._artifacts[name] = artifact
 
     def _preprocess_features(self) -> None:
@@ -105,10 +112,10 @@ Pipeline(
                          vector in self._input_vectors]
         self._test_X = [vector[int(split * len(vector)):] for
                         vector in self._input_vectors]
-        self._train_y = self._output_vector[:int(split *
-                                                 len(self._output_vector))]
-        self._test_y = self._output_vector[int(split *
-                                               len(self._output_vector)):]
+        self._train_y = self._output_vector[:int(
+            split * len(self._output_vector))]
+        self._test_y = self._output_vector[int(
+            split * len(self._output_vector)):]
 
     def _compact_vectors(self, vectors: List[np.array]) -> np.array:
         return np.concatenate(vectors, axis=1)
@@ -148,7 +155,7 @@ Pipeline(
             train_results.append(str(metric), train_result)
 
         self._evaluate()
-        test_results = [(str(metric), result) for metric, result 
+        test_results = [(str(metric), result) for metric, result
                         in self._metrics_results]
 
         return {

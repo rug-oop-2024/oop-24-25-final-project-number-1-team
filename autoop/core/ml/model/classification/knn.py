@@ -6,7 +6,7 @@ import numpy as np
 class KNeighborsClassifierModel(Model):
     """K-Nearest Neighbors Classifier model"""
 
-    def __init__(self, **hyperparameters):
+    def __init__(self, **hyperparameters) -> None:
         """
         Initializes the classification model and passes hyperparameters
         """

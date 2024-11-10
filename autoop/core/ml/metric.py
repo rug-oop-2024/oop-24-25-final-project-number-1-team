@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Any
 import numpy as np
 
 METRICS = [
@@ -12,7 +11,7 @@ METRICS = [
 ]
 
 
-def get_metric(name: str) -> Any:
+def get_metric(name: str) -> 'Metric' | ValueError:
     """
         Factory function to get a metric by name.
 
