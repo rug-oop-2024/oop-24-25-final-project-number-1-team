@@ -14,7 +14,7 @@ class ArtifactRegistry():
         Initializes the class with a storage and a database.
 
         Args:
-            database (Database): The database instance that is used 
+            database (Database): The database instance that is used
                                 for entries.
             storage (Storage): The storage to use for saving
                                 and loading artifacts.
