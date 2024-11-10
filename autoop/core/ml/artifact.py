@@ -2,7 +2,13 @@ from pydantic import BaseModel, Field, PrivateAttr
 from typing import List, Dict
 import base64
 
+
 class Artifact(BaseModel):
+    """A class used to store info about an artifact, for example its name,
+    version, asset path, metadata, tags, type. It also stores the binary data
+    of the artifact. It also has a property for generating an uniquee id, as
+    per requirements.
+    """
     name: str = Field(title="Artifact name")
     version: str = Field(title="Artifact version")
     asset_path: str = Field(title="Artifact asset path")
@@ -23,13 +29,13 @@ class Artifact(BaseModel):
         """
         encoded_path = base64.b64encode(self.asset_path.encode()).decode()
         return f"{encoded_path}:{self.version}"
-    
+
     def read(self) -> bytes:
         """
         Returns the binary data of the artifact.
         """
         return self._data
-    
+
     def save(self, data: bytes) -> bytes:
         """
         Saves binary data to the artifact, then returns it.

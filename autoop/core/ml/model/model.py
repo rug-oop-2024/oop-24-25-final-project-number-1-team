@@ -6,12 +6,13 @@ from copy import deepcopy
 from typing import Literal, Dict, Any
 import pickle
 
+
 class Model(ABC):
     """Base class for all models."""
 
     def __init__(self,
                  model_type: Literal["regression", "classification"],
-                 hyperparameters: Dict[str, Any] = None):
+                 hyperparameters: Dict[str, Any] = None) -> None:
         """
         Initializes the model.
 
@@ -22,10 +23,10 @@ class Model(ABC):
             defaulted to an empty dict.
         """
         self.type = model_type
-        self.parameters = {} # we will use it for learned params
+        self.parameters = {}  # we will use it for learned params
         self.hyperparameters = hyperparameters or {}
-        self.model = None # we set this in the init of subclass
-    
+        self.model = None  # we set this in the init of subclass
+
     @abstractmethod
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -51,7 +52,7 @@ class Model(ABC):
             raise ValueError("Model is not initialized.")
         return self.model.predict(X)
 
-    def to_artifact(self,name: str) -> Artifact:
+    def to_artifact(self, name: str) -> Artifact:
         """
         Transforms model data into an artifact, to be saved.
 
@@ -69,7 +70,7 @@ class Model(ABC):
         }
         serialized_data = pickle.dumps(data)
         return Artifact(name=name, data=serialized_data, type=self.type)
-    
+
     def __str__(self) -> str:
         """
         Returns the name of the model.

@@ -11,7 +11,8 @@ METRICS = [
     "recall",
 ]
 
-def get_metric(name: str):
+
+def get_metric(name: str) -> Any:
     """
         Factory function to get a metric by name.
 
@@ -72,7 +73,7 @@ class Metric(ABC):
     def __str__(self) -> str:
         """
         Used in pipeline to print the metric name
-        
+
         Returns:
             str: name of the metric.
         """
@@ -88,8 +89,19 @@ class MeanSquaredError(Metric):
     def __call__(self,
                  predictions: np.ndarray,
                  ground_truth: np.ndarray) -> float:
+        """
+        Calculates the MSE metric from the predictions and
+        ground truth values.
+
+        Args:
+            predictions (np.ndarray): predictions of the model.
+            ground_truth (np.ndarray): ground truth values.
+
+        Returns:
+            float: value of the metric.
+        """
         return np.mean((predictions - ground_truth) ** 2)
-    
+
 
 class MeanAbsoluteError(Metric):
     """Mean Absolute Error (MAE) metric."""
@@ -97,8 +109,19 @@ class MeanAbsoluteError(Metric):
     def __call__(self,
                  predictions: np.ndarray,
                  ground_truth: np.ndarray) -> float:
+        """
+        Calculates the MAE metric from the predictions and
+        ground truth values.
+
+        Args:
+            predictions (np.ndarray): predictions of the model.
+            ground_truth (np.ndarray): ground truth values.
+
+        Returns:
+            float: value of the metric.
+        """
         return np.mean(np.abs(predictions - ground_truth))
-    
+
 
 class RSquared(Metric):
     """R-squared metric."""
@@ -106,6 +129,17 @@ class RSquared(Metric):
     def __call__(self,
                  predictions: np.ndarray,
                  ground_truth: np.ndarray) -> float:
+        """
+        Calculates the rsquared metric from the predictions and
+        ground truth values.
+
+        Args:
+            predictions (np.ndarray): predictions of the model.
+            ground_truth (np.ndarray): ground truth values.
+
+        Returns:
+            float: value of the metric.
+        """
         mean = np.mean(ground_truth)
         total = np.sum((ground_truth - mean) ** 2)
         res = np.sum((ground_truth - predictions) ** 2)
@@ -121,6 +155,17 @@ class Accuracy(Metric):
     def __call__(self,
                  predictions: np.ndarray,
                  ground_truth: np.ndarray) -> float:
+        """
+        Calculates the accuracy metric from the predictions and
+        ground truth values.
+
+        Args:
+            predictions (np.ndarray): predictions of the model.
+            ground_truth (np.ndarray): ground truth values.
+
+        Returns:
+            float: value of the metric.
+        """
         return np.mean(predictions == ground_truth)
 
 
@@ -130,6 +175,17 @@ class Precision(Metric):
     def __call__(self,
                  predictions: np.ndarray,
                  ground_truth: np.ndarray) -> float:
+        """
+        Calculates the precision metric from the predictions and
+        ground truth values.
+
+        Args:
+            predictions (np.ndarray): predictions of the model.
+            ground_truth (np.ndarray): ground truth values.
+
+        Returns:
+            float: value of the metric.
+        """
         classes = np.unique(ground_truth)
         precisions = []
         for c in classes:
@@ -137,7 +193,7 @@ class Precision(Metric):
             fp = np.sum((predictions == c) & (ground_truth != c))
             precisions.append(tp / (tp + fp) if (tp + fp) > 0 else 0)
         return np.mean(precisions)
-    
+
 
 class Recall(Metric):
     """Recall metric for classifications."""
@@ -145,6 +201,17 @@ class Recall(Metric):
     def __call__(self,
                  predictions: np.ndarray,
                  ground_truth: np.ndarray) -> float:
+        """
+        Calculates the recall metric from the predictions and
+        ground truth values.
+
+        Args:
+            predictions (np.ndarray): predictions of the model.
+            ground_truth (np.ndarray): ground truth values.
+
+        Returns:
+            float: value of the metric.
+        """
         classes = np.unique(ground_truth)
         recalls = []
         for c in classes:

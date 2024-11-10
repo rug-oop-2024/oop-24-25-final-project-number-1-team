@@ -1,7 +1,19 @@
+"""
+This module contains a factory function and constants for showing and
+initializing supported models, both regression and classification.
+"""
 
 from autoop.core.ml.model.model import Model
-from autoop.core.ml.model.regression import MultipleLinearRegression, DecisionTreeRegression, RidgeRegression
-from autoop.core.ml.model.classification import LogisticRegressionModel, KNeighborsClassifierModel, DecisionTreeClassifierModel
+from autoop.core.ml.model.regression import (
+    MultipleLinearRegression,
+    DecisionTreeRegression,
+    RidgeRegression
+)
+from autoop.core.ml.model.classification import (
+    LogisticRegressionModel,
+    KNeighborsClassifierModel,
+    DecisionTreeClassifierModel
+)
 
 REGRESSION_MODELS = [
     "MultipleLinearRegression",
@@ -15,10 +27,11 @@ CLASSIFICATION_MODELS = [
     "DecisionTreeClassifierModel"
 ]
 
+
 def get_model(model_name: str) -> Model:
     """Factory function to get model by its name"""
     default_line1 = f"Model {model_name} is not supported."
-    default_line2 = f"""List of supported models: 
+    default_line2 = f"""List of supported models:
     {REGRESSION_MODELS + CLASSIFICATION_MODELS}"""
 
     match model_name:
