@@ -364,13 +364,14 @@ if st.session_state['last_inputs'] != inputs:
 st.session_state['last_inputs'] = inputs
 
 if st.button("Train Pipeline"):
-    results, pipeline = train_pipeline(dataset,
-                             features,
-                             target_feature,
-                             model_name,
-                             ratio,
-                             metrics,
-                             map_features)
+    results, pipeline = train_pipeline(
+        dataset,
+        features,
+        target_feature,
+        model_name,
+        ratio,
+        metrics,
+        map_features)
     if results:
         st.session_state['results'] = results
         st.session_state['pipeline'] = pipeline
@@ -391,8 +392,11 @@ if 'pipeline' in st.session_state and st.session_state['pipeline']:
         for artifact in artifacts:
             artifact.name = f"{pipeline_name}_{artifact.name}"
             artifact.version = pipeline_version
-            artifact.asset_path = f"pipelines/{pipeline_name}/{artifact.name}_{artifact.version}.pkl"
+            artifact.asset_path = (
+                f"pipelines/{pipeline_name}/"
+                f"{artifact.name}_{artifact.version}.pkl"
+            )
             artifact.type = "pipeline"
             automl.registry.register(artifact)
-        
+
         st.success("Pipeline saved successfully!")
