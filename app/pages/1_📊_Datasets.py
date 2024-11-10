@@ -12,9 +12,18 @@ st.set_page_config(
 )
 
 def write_helper_text(text: str) -> None:
+    # for rendering the subtitle
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
+
 def write_dataset_card(dataset: Dataset) -> None:
+    """
+    This function renders all the information for a dataset saved
+    in the registry in a card format.
+
+    Args:
+        dataset (Dataset): The dataset object used to render its info.
+    """
     st.write(f"**Name:** {dataset.name}")
     st.write(f"**Version:** {dataset.version}")
     if dataset.tags:
@@ -31,7 +40,12 @@ def write_dataset_card(dataset: Dataset) -> None:
         st.success(f"Dataset '{dataset.name}' deleted successfully.")
         st.rerun()
 
+
 def write_upload_dataset_form() -> None:
+    """
+    This function renders the section of the page for uploading a new
+    dataset in csv format and creating a new dataset artifact in the registry.
+    """
     st.write("Preview of the dataset:")
     data = pd.read_csv(file)
     st.write(data.head())
@@ -54,6 +68,7 @@ def write_upload_dataset_form() -> None:
         automl.registry.register(dataset)
         st.success(f"Dataset '{name} created successfully!")
         st.rerun()
+
 
 st.title("Dataset Management")
 write_helper_text("From here, you can add, delete and view datasets.")

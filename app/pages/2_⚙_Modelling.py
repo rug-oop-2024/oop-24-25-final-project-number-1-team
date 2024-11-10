@@ -14,10 +14,20 @@ from autoop.core.ml.pipeline import Pipeline
 
 st.set_page_config(page_title="Modelling", page_icon="📈")
 
-def write_helper_text(text: str):
+
+def write_helper_text(text: str) -> None:
+    # for rendering the subtitle
     st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
 
-def select_dataset():
+
+def select_dataset() -> Dataset:
+    """
+    Function used to render a selectbox for user to choose a dataset for
+    the pipeline.
+
+    Returns:
+        Dataset: The selected dataset object.
+    """
     automl = AutoMLSystem.get_instance()
     datasets = automl.registry.list(type="dataset")
 
@@ -42,7 +52,19 @@ def select_dataset():
 
     return selected_dataset
 
-def select_features(dataset):
+
+def select_features(dataset: Dataset) -> tuple:
+    """
+    A function used to render the feature selection section of the page
+    for the pipeline.
+
+    Args:
+        dataset (Dataset): The dataset object used for training.
+
+    Returns:
+        tuple: The selected input features, target feature, task type and
+        a mapping of feature names to their objects.    
+    """
     features = detect_feature_types(dataset)
     map_features = {feature.name: feature for feature in features}
     feature_names = [feature.name for feature in features]
@@ -66,13 +88,25 @@ def select_features(dataset):
         task_type = "regression"
     else:
         task_type = "unknown"
-        st.error("Target feature type is unknown. Please select a valid target feature.")
+        st.error("Target feature type is unknown. Please select a "
+                 "valid target feature.")
         return None, None, None, None
-    
+
     st.write(f"Task type: **{task_type}**")
     return input_features, target_feature, task_type, map_features
 
-def select_model_metrics(type):
+
+def select_model_metrics(type: str) -> tuple:
+    """
+    Method used for rendering all content of page that is related to selecting
+    the model and metrics for the pipeline.
+
+    Args:
+        type (str): The task type selected by user.
+
+    Returns:
+        tuple: The selected model name and metrics, in a list of strings.
+    """
     if type == "classification":
         models = CLASSIFICATION_MODELS
         metric = CLASSIFICATION_METRICS
@@ -82,7 +116,7 @@ def select_model_metrics(type):
     else:
         st.error("Task type is unknown. Please select a valid target feature.")
         return None, None
-    
+
     model_name = st.selectbox("Select a model", models)
     metrics = st.multiselect("Select metrics", metric)
 
@@ -92,10 +126,29 @@ def select_model_metrics(type):
     if not metrics:
         st.error("Please select at least one metric.")
         return None, None
-    
+
     return model_name, metrics
 
-def pipeline_summary(dataset, features, target_feature, task_type, model_name, split, metrics):
+
+def pipeline_summary(dataset: Dataset,
+                     features: list,
+                     target_feature: str,
+                     task_type: str,
+                     model_name: str,
+                     split: float,
+                     metrics: list) -> None:
+    """
+    Method used to display the summary of pipeline options selected by user.
+
+    Args:
+        dataset (Dataset): The dataset object used for training.
+        features (list): The list of input features selected by user.
+        target_feature (str): The target feature selected by user.
+        task_type (str): The task type selected by user.
+        model_name (str): The model name selected by user.
+        split (float): The train-test split ratio.
+        metrics (list): The list of metrics selected by user.
+    """
     st.subheader("Pipeline Summary")
 
     st.write(f"**Dataset:** {dataset.name} (v{dataset.version})")
@@ -106,7 +159,29 @@ def pipeline_summary(dataset, features, target_feature, task_type, model_name, s
     st.write(f"**Train-Test Split Ratio:** {split}")
     st.write(f"**Metrics:** {', '.join(metrics)}")
 
-def train_pipeline(dataset, features, target_feature, model_name, split, metrics, map_features):
+
+def train_pipeline(dataset: Dataset,
+                   features: list,
+                   target_feature: str,
+                   model_name: str,
+                   split: float,
+                   metrics: list,
+                   map_features: dict) -> dict:
+    """
+    Function used to train the pipeline given all its info selected by user.
+
+    Args:
+        dataset (Dataset): The dataset object used for training.
+        features (list): The list of input features selected by user.
+        target_feature (str): The target feature selected by user.
+        model_name (str): The model name selected by user.
+        split (float): The train-test split ratio.
+        metrics (list): The list of metrics selected by user.
+        map_features (dict): A mapping of feature names to their objects.
+
+    Returns:
+        dict: The results of the pipeline execution.
+    """
     try:
         model_features = [map_features[feature] for feature in features]
         model_target_feature = map_features[target_feature]
@@ -133,7 +208,14 @@ def train_pipeline(dataset, features, target_feature, model_name, split, metrics
         st.error(f"An error occurred: {str(e)}")
         return None
 
-def write_results(results):
+
+def write_results(results: dict) -> None:
+    """
+    Method used for rendering the results of pipeline execution.
+
+    Args:
+        results (dict): The results of the pipeline execution
+    """
     st.subheader("Pipeline Results")
 
     st.write("**Training Metrics:**")
@@ -149,9 +231,10 @@ def write_results(results):
     predictions = pd.DataFrame(pred_array, columns=["Predictions"])
     st.write(predictions)
 
+
 st.write("# ⚙ Modelling")
-write_helper_text("In this section, you can design a machine learning pipeline "
-                  "to train a model on a dataset.")
+write_helper_text("In this section, you can design a machine learning pipeline"
+                  " to train a model on a dataset.")
 
 if 'results' not in st.session_state:
     st.session_state['results'] = None
@@ -172,7 +255,13 @@ if not (model_name and metrics):
 
 ratio = st.slider("Train-Test Split Ratio", 0.1, 0.9, 0.8, 0.05)
 
-pipeline_summary(dataset, features, target_feature, task_type, model_name, ratio, metrics)
+pipeline_summary(dataset,
+                 features,
+                 target_feature,
+                 task_type,
+                 model_name,
+                 ratio,
+                 metrics)
 
 inputs = {
     "dataset": dataset,
@@ -191,7 +280,13 @@ if st.session_state['last_inputs'] != inputs:
 st.session_state['last_inputs'] = inputs
 
 if st.button("Train Pipeline"):
-    results = train_pipeline(dataset, features, target_feature, model_name, ratio, metrics, map_features)
+    results = train_pipeline(dataset,
+                             features,
+                             target_feature,
+                             model_name,
+                             ratio,
+                             metrics,
+                             map_features)
     if results:
         st.session_state['results'] = results
         write_results(results)

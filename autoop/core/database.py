@@ -110,8 +110,8 @@ class Database():
             if len(parts) < 2:
                 continue
             collection, id = parts[-2:]
-            data = self._storage.load(os.path.join(collection,id))
+            data = self._storage.load(os.path.join(collection, id))
             # Ensure the collection exists in the dictionary
             if collection not in self._data:
-                self._data[collection] = {} 
+                self._data[collection] = {}
             self._data[collection][id] = json.loads(data.decode())

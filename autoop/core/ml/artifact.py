@@ -28,8 +28,10 @@ class Artifact(BaseModel):
             str: Unique ID of the artifact.
         """
         base_path = base64.b64encode(self.asset_path.encode()).decode()
-        encoded_path = base_path.rstrip("=").replace('+', '-').replace('/', '_')
-        encoded_version = self.version.replace('.', '_').replace(":", "_").replace(',', '_').replace('=', '_')
+        encoded_path = (base_path.rstrip("=").replace('+', '-')
+                        .replace('/', '_'))
+        encoded_version = (self.version.replace('.', '_').replace(":", "_")
+                           .replace(',', '_').replace('=', '_'))
         return f"{encoded_path}_{encoded_version}"
 
     def read(self) -> bytes:
