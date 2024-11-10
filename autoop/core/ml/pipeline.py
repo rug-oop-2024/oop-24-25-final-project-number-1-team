@@ -168,5 +168,5 @@ Pipeline(
         return {
             "train_metrics": train_results,
             "test_metrics": test_results,
-            "predictions": self._predictions,
+            "predictions": self._predictions.tolist(),
         }
