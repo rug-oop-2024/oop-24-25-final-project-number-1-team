@@ -11,7 +11,7 @@ METRICS = [
 ]
 
 
-def get_metric(name: str) -> 'Metric' | ValueError:
+def get_metric(name: str) -> 'Metric':
     """
         Factory function to get a metric by name.
 
