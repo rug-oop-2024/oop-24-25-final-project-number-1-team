@@ -53,7 +53,7 @@ def select_dataset() -> Dataset:
     return selected_dataset
 
 
-def filter_dataset(dataset: Dataset) -> pd.DataFrame:
+def filter_dataset(dataset: Dataset) -> tuple:
     """
     OOP-003: Filter dataset based on user input.
     This function allows user to filter based on criteria.
@@ -62,36 +62,54 @@ def filter_dataset(dataset: Dataset) -> pd.DataFrame:
         dataset (Dataset): The dataset object used for training.
 
     Returns:
-        pd.DataFrame: The filtered dataset.
+        tuple: The filtered dataset and filters applied as strings.
     """
     st.subheader("Filter Dataset")
 
     data = dataset.read()
     columns = data.columns.tolist()
 
-    filtered_column = st.selectbox("Select a column to filter", columns)
+    no_filters = st.number_input("Number of filters", 1, 5, 1, 1)
+    filters = []
 
-    if data[filtered_column].dtype == 'object':
-        unique_vals = data[filtered_column].unique()
-        selected_vals = st.multiselect(
-            f"Select values for '{filtered_column}", unique_vals)
-        if selected_vals:
-            data = data[data[filtered_column].isin(selected_vals)]
+    for i in range(no_filters):
+        st.write(f"### Filter {i + 1}")
+        filtered_col = st.selectbox(f"Select column for filter {i + 1}",
+                                    columns,
+                                    key=f"filter_{i}")
+        
+        if data[filtered_col].dtype == 'object':
+            # in this case it is a categorical column
+            unique_vals = data[filtered_col].unique()
+            selected_vals = st.multiselect(
+                f"Select values for '{filtered_col}'",
+                unique_vals,
+                key=f"filter_val_{i}")
+            if selected_vals:
+                filters.append(data[filtered_col].isin(selected_vals))
 
-    else:
-        min_val = float(data[filtered_column].min())
-        max_val = float(data[filtered_column].max())
-        range = st.slider(f"Select range for '{filtered_column}'",
-                          min_val,
-                          max_val,
-                          (min_val, max_val))
-        data = data[((data[filtered_column] >= range[0]) &
-                     (data[filtered_column] <= range[1]))]
+        else:
+            # in this case it is a numerical column
+            min_val = float(data[filtered_col].min())
+            max_val = float(data[filtered_col].max())
+            select_range = st.slider(f"Select range for '{filtered_col}'",
+                              min_val,
+                              max_val,
+                              (min_val, max_val),
+                              key=f"filter_val_{i}")
+            filters.append((data[filtered_col] >= select_range[0]) &
+                            (data[filtered_col] <= select_range[1]))
+    
+    if filters:
+        combined = filters[0]
+        for f in filters[1:]:
+            combined = combined & f
+        data = data[combined]
         
     st.write("Filtered preview:")
     st.write(data.head())
 
-    return data
+    return data, [f.to_string() for f in filters]
 
 
 def select_features(dataset: Dataset) -> tuple:
@@ -292,7 +310,7 @@ dataset = select_dataset()
 if not dataset:
     st.stop()
 
-filtered_data = filter_dataset(dataset)
+filtered_data, filters_as_strings = filter_dataset(dataset)
 if filtered_data.empty:
     st.error("No data found after filtering. Please select"
              " different criteria.")
@@ -325,6 +343,7 @@ pipeline_summary(dataset,
 
 inputs = {
     "dataset": dataset,
+    "filters": filters_as_strings,
     "features": features,
     "target_feature": target_feature,
     "task_type": task_type,
