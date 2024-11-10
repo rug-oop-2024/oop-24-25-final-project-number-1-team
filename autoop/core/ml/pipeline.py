@@ -159,7 +159,7 @@ Pipeline(
         train_results = []
         for metric in self._metrics:
             train_result = metric.evaluate(train_predictions, self._train_y)
-            train_results.append(str(metric), train_result)
+            train_results.append((str(metric), train_result))
 
         self._evaluate()
         test_results = [(str(metric), result) for metric, result

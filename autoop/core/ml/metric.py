@@ -1,15 +1,19 @@
 from abc import ABC, abstractmethod
 import numpy as np
 
-METRICS = [
-    "mean_squared_error",
-    "mean_absolute_error",
-    "r_squared",
-    "accuracy",
-    "precision",
-    "recall",
+REGRESSION_METRICS = [
+    "Mean Squared Error",
+    "Mean Absolute Error",
+    "R2 Score",
 ]
 
+CLASSIFICATION_METRICS = [
+    "Accuracy",
+    "Precision",
+    "Recall",
+]
+
+METRICS = REGRESSION_METRICS + CLASSIFICATION_METRICS
 
 def get_metric(name: str) -> 'Metric':
     """
@@ -19,17 +23,17 @@ def get_metric(name: str) -> 'Metric':
             name (str): name of the metric to get.
     """
     match name:
-        case "mean_squared_error":
+        case "Mean Squared Error":
             return MeanSquaredError()
-        case "mean_absolute_error":
+        case "Mean Absolute Error":
             return MeanAbsoluteError()
-        case "r_squared":
+        case "R2 Score":
             return RSquared()
-        case "accuracy":
+        case "Accuracy":
             return Accuracy()
-        case "precision":
+        case "Precision":
             return Precision()
-        case "recall":
+        case "Recall":
             return Recall()
         case _:
             raise ValueError(f"Metric {name} is not available. "

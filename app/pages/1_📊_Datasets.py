@@ -6,12 +6,15 @@ from autoop.core.ml.dataset import Dataset
 automl = AutoMLSystem.get_instance()  # singleton init
 datasets = automl.registry.list(type="dataset")
 
+def write_helper_text(text: str):
+    st.write(f"<p style=\"color: #888;\">{text}</p>", unsafe_allow_html=True)
+
 st.set_page_config(
     page_title="Datasets",
     page_icon="📊",
 )
 st.title("Dataset Management")
-st.write("From here, you can add, delete and view datasets.")
+write_helper_text("From here, you can add, delete and view datasets.")
 
 # View existing Datasets
 

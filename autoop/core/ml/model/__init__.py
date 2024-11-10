@@ -16,15 +16,15 @@ from autoop.core.ml.model.classification import (
 )
 
 REGRESSION_MODELS = [
-    "MultipleLinearRegression",
-    "DecisionTreeRegression",
-    "RidgeRegression"
+    "Multiple Linear Regression",
+    "Decision Tree Regression",
+    "Ridge Regression"
 ]
 
 CLASSIFICATION_MODELS = [
-    "LogisticRegressionModel",
-    "KNeighborsClassifierModel",
-    "DecisionTreeClassifierModel"
+    "Logistic Regression",
+    "K-Nearest Neighbors",
+    "Decision Tree"
 ]
 
 
@@ -35,17 +35,17 @@ def get_model(model_name: str) -> Model:
     {REGRESSION_MODELS + CLASSIFICATION_MODELS}"""
 
     match model_name:
-        case "MultipleLinearRegression":
+        case "Multiple Linear Regression":
             return MultipleLinearRegression()
-        case "DecisionTreeRegression":
+        case "Decision Tree Regression":
             return DecisionTreeRegression()
-        case "RidgeRegression":
+        case "Ridge Regression":
             return RidgeRegression()
-        case "LogisticRegressionModel":
+        case "Logistic Regression":
             return LogisticRegressionModel()
-        case "KNeighborsClassifierModel":
+        case "K-Nearest Neighbors":
             return KNeighborsClassifierModel()
-        case "DecisionTreeClassifierModel":
+        case "Decision Tree":
             return DecisionTreeClassifierModel()
         case _:
             raise ValueError(default_line1 + '\n' + default_line2)
