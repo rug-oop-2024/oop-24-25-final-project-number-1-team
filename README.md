@@ -174,9 +174,9 @@ If you did not implement the feature
 | `ST/modelling/pipeline/summary`       | FN           | Ceviker Sinan-Deniz  |    X    | |
 | `ST/modelling/pipeline/train`         | FN           | Ceviker Sinan-Deniz  |    X    | |
 | `ST/modelling/pipeline/save`          | FN           | Ceviker Sinan-Deniz  |    X    | |
-| `ST/page/deployment`                  | FN           | Ceviker Sinan-Deniz  |    X    | |
-| `ST/deployment/load`                  | FN           | Ceviker Sinan-Deniz  |    X    | |
-| `ST/deployment/predict`               | FN           | Ceviker Sinan-Deniz  |    X    | |
+| `ST/page/deployment`                  | FN           | Ceviker Sinan-Deniz  |         | |
+| `ST/deployment/load`                  | FN           | Ceviker Sinan-Deniz  |         | |
+| `ST/deployment/predict`               | FN           | Ceviker Sinan-Deniz  |         | |
 
 If you add extra features, please indicate them below:
 | Requirement                           | Type (FN/NF) | Implemented by       | Implementation Completed (add X if done) | Comment |
